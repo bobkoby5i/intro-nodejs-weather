@@ -2,6 +2,8 @@ import express from 'express';
 import { router as mocks } from './routes/weather-mocks.js';
 import { router as weather } from './routes/weather.js';
 
+const port = process.env.PORT;
+
 const app = express();
 app.use(express.static('weather'));
 

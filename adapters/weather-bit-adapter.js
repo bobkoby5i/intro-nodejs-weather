@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-import get from 'lodash.get';
+import get from 'lodash';
 
 import { emptyWeatherObject } from './empty-weather-object.js';
 

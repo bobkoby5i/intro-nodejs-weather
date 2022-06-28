@@ -52,7 +52,7 @@ Aplikację uruchomisz a pomocą komendy `npm run start`.
 
 ## Zadanie 2
 
-W folderze `/mocks` znajdują się pliki z przykładowymi odpowiedziami z każdego z API. W pliku `/routes/weather-mocks.js` obsłuż ścieżki, zwracające zawartość każdego pliku w folderze `/mocks`. Nazwij je w odpowiedni sposób.
+W folderze `/mocks` znajdują się pliki z przykładowymi odpowiedziami z każdego z API. W pliku `/routes/.js` obsłuż ścieżki, zwracające zawartość każdego pliku w folderze `/mocks`. Nazwij je w odpowiedni sposób.
 
 Użyj do tego przygotowanej przez Ciebie w pliku `/utils/utils.js` funkcji odczytującej dane z pliku.
 

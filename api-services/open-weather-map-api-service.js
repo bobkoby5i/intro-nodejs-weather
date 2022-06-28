@@ -8,6 +8,23 @@ export class OpenWeatherMapApiService {
   }
 
   async getWeather(cityName) {
+
+    const url = new URL(`${this.apiBaseUrl}/weather`);
+    url.searchParams.append('appid', this.apiKey);
+    url.searchParams.append('q', cityName);
+    url.searchParams.append('units', 'metric');
+
+
+    const response = fetch(url, {
+      method: 'GET',
+      //body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error(response);
+    }    
+
     return response.json();
   }
 
@@ -18,7 +35,21 @@ export class OpenWeatherMapApiService {
 
 export class OpenWeatherMapMockService {
   async getWeather(cityName) {
-    return response.json();
+
+    const urlMock = 'http://localhost:3000/mocks/openweathermap_current'
+
+    const response = fetch(urlMock, {
+      method: 'GET',
+      //body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error(response);
+    }    
+
+    return response.json();    
+
   }
 
   getIconUrl(iconCode) {
