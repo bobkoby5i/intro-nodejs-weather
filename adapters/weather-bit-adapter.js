@@ -2,7 +2,7 @@ import moment from 'moment-timezone';
 import get from 'lodash';
 
 import { emptyWeatherObject } from './empty-weather-object.js';
-import { WeatherBitApiService, WeatherBitMockService } from '../api-services/weather-bit-api-service.js';
+
 
 export class WeatherBitAdapter {
   constructor(weatherBitApiService) {
@@ -10,31 +10,35 @@ export class WeatherBitAdapter {
   }
 
   async getWeather(cityName) {
-    const weatherBitMockService = new WeatherBitMockService();
     const res = emptyWeatherObject;
     let moment_time = null;
     let current;
     try {
       current = this.weatherBitApiService.getCurrent(cityName)
+
+      const firstDataObject = get(current, 'data[0]');
+      if (get(firstDataObject, 'ob_time') && get(firstDataObject, 'timezone')) {
+        moment_time = moment.tz(firstDataObject.ob_time, firstDataObject.timezone).format()
+      }
+        
+
+      res.lastObservationTime        = moment_time ? new Date(moment_time) : null,
+      res.location.cityName          = get(firstDataObject, 'city_name')
+      res.location.countryCode       = get(firstDataObject, 'country_code')
+      res.weather.currentTemperature = get(firstDataObject, 'temp')
+      res.weather.minTemperature     = null
+      res.weather.maxTemperature     = null
+      res.weather.units              = 'C'
+      res.weather.description        = get(firstDataObject, 'weather.description')
+      res.weather.iconUrl            = this.weatherBitApiService.getIconUrl(get(firstDataObject, 'weather.icon'))
+  
+      return res;      
+      
     } catch (error) {
-      current = weatherBitMockService.getCurrent(cityName)
-    }
-    const firstDataObject = get(current, 'data[0]');
-    if (get(firstDataObject, 'ob_time') && get(firstDataObject, 'timezone')) {
-      moment_time = moment.tz(firstDataObject.ob_time, firstDataObject.timezone).format()
+      return emptyWeatherObject;
     }
 
-    res.lastObservationTime        = moment_time ? new Date(moment_time) : null,
-    res.location.cityName          = get(firstDataObject, 'city_name')
-    res.location.countryCode       = get(firstDataObject, 'country_code')
-    res.weather.currentTemperature = get(firstDataObject, 'temp')
-    res.weather.minTemperature     = null
-    res.weather.maxTemperature     = null
-    res.weather.units              = 'C'
-    res.weather.description        = get(firstDataObject, 'weather.description')
-    res.weather.iconUrl            = this.weatherBitApiService.getIconUrl(get(firstDataObject, 'weather.icon'))
 
-    return res;
   }
   
 }

@@ -60,7 +60,9 @@ const weatherBitAdapter = new WeatherBitAdapter(weatherBitService);
 const accuWeatherAdapter = new AccuWeatherAdapter(accuWeatherService);
 
 router.get('/', async (req, res) => {
-  const locationSearch = 'Warszawa'; // take it from request params
+  //const locationSearch = 'Warszawa'; // take it from request params
+  const locationSearch = req.query.locationSearch
+
   const [openWeatherMap, weatherBit, accuWeather] = await Promise.all([
     openWeatherMapAdapter.getWeather(locationSearch),
     weatherBitAdapter.getWeather(locationSearch),
