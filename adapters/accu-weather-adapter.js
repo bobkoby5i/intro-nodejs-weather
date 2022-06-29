@@ -19,9 +19,9 @@ export class AccuWeatherAdapter {
 
     try {
       const location = await this.accuWeatherApiService.getLocation(cityName);
-      const firstLocation = location[0];
+      firstLocation = location[0];
 
-      const [currentCondition, dailyForecast] = await Promise.all([
+      [currentCondition, dailyForecast] = await Promise.all([
         this.accuWeatherApiService
           .getCurrentConditions(firstLocation.Key)
           .then((conditions) => conditions[0])
@@ -32,7 +32,6 @@ export class AccuWeatherAdapter {
       ]);      
 
     } catch (error) {
-      current = accuWeatherMockService.getLocation(cityName)
       firstLocation     = await accuWeatherMockService.getLocation(cityName)
       currentCondition  = await accuWeatherMockService.getCurrentConditions(firstLocation.Key)
       dailyForecast     = await accuWeatherMockService.getDailyForecast(firstLocation.Key)
