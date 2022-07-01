@@ -7,9 +7,9 @@ import { WeatherBitAdapter } from '../adapters/weather-bit-adapter.js';
 import { AccuWeatherAdapter } from '../adapters/accu-weather-adapter.js';
 
 import {
-  OpenWeatherMapApiService,
-  OpenWeatherMapMockService,
-} from '../api-services/open-weather-map-api-service.js';
+  OpenWeatherApiService,
+  OpenWeatherMockService,
+} from '../api-services/open-weather-api-service.js';
 import {
   WeatherBitApiService,
   WeatherBitMockService,
@@ -30,8 +30,8 @@ export const router = express.Router();
 
 const openWeatherService =
   process.env.OPEN_WEATHER_MAP_MOCK === 'true'
-    ? new OpenWeatherMapMockService()
-    : new OpenWeatherMapApiService(
+    ? new OpenWeatherMockService()
+    : new OpenWeatherApiService(
         process.env.OPEN_WEATHER_MAP_ICON_BASE_URL,
         process.env.OPEN_WEATHER_MAP_API_BASE_URL,
         process.env.OPEN_WEATHER_MAP_API_KEY,
@@ -55,13 +55,18 @@ const accuWeatherService =
         process.env.ACCU_WEATHER_API_KEY,
       );
 
+// console.log(openWeatherService)      
+// console.log(weatherBitService)      
+// console.log(accuWeatherService)      
+
 const openWeatherMapAdapter = new OpenWeatherMapAdapter(openWeatherService);
 const weatherBitAdapter = new WeatherBitAdapter(weatherBitService);
 const accuWeatherAdapter = new AccuWeatherAdapter(accuWeatherService);
 
 router.get('/', async (req, res) => {
   //const locationSearch = 'Warszawa'; // take it from request params
-  const locationSearch = req.query.locationSearch
+  const locationSearch = req.query.city
+  const responses = []
 
   const [openWeatherMap, weatherBit, accuWeather] = await Promise.all([
     openWeatherMapAdapter.getWeather(locationSearch),
@@ -69,5 +74,13 @@ router.get('/', async (req, res) => {
     accuWeatherAdapter.getWeather(locationSearch),
   ]);
 
-  res.json({ openWeatherMap, weatherBit, accuWeather });
+  const openWeatherMap2 = await openWeatherMapAdapter.getWeather(locationSearch);
+  const weatherBit2     = await weatherBitAdapter.getWeather(locationSearch);
+  const accuWeather2    = await accuWeatherAdapter.getWeather(locationSearch);
+
+  console.log("openWeatherMap2",openWeatherMap2)
+  console.log("weatherBit2",weatherBit2)
+  console.log("accuWeather2",accuWeather2)
+
+  res.json({ openWeatherMap:openWeatherMap2, weatherBit:weatherBit2, accuWeather:accuWeather2 });
 });

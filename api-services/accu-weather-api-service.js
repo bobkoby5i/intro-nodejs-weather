@@ -12,15 +12,19 @@ export class AccuWeatherApiService {
    * @param {string} cityName
    */
   async getLocation(cityName) {
+    console.log(`AccuWeatherApiService.getLocation(${cityName})`)
+
     const url = new URL(`${this.apiBaseUrl}/locations/v1/cities/search`);
     url.searchParams.append('apikey', this.apiKey);
     url.searchParams.append('q', cityName);
 
     const response = await fetch(url, {
       method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (!response.ok) {
+      console.log("NOT OK")
       throw new Error(response);
     }
 
@@ -32,6 +36,7 @@ export class AccuWeatherApiService {
    * @param {string} locationId - retuned from @getLocation API request
    */
   async getCurrentConditions(locationId) {
+    console.log("AccuWeatherApiService.getCurrentConditions()")
     const url = new URL(
       `${this.apiBaseUrl}/currentconditions/v1/${locationId}`,
     );
@@ -39,6 +44,7 @@ export class AccuWeatherApiService {
 
     const response = await fetch(url, {
       method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (!response.ok) {
@@ -52,6 +58,7 @@ export class AccuWeatherApiService {
    * @param {string} locationId - returned from @getLocation API request
    */
   async getDailyForecast(locationId) {
+    console.log("AccuWeatherApiService.getDailyForecast()")
     const url = new URL(
       `${this.apiBaseUrl}/forecasts/v1/daily/1day/${locationId}`,
     );
@@ -60,6 +67,7 @@ export class AccuWeatherApiService {
 
     const response = await fetch(url, {
       method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (!response.ok) {
@@ -80,24 +88,34 @@ export class AccuWeatherApiService {
 
 export class AccuWeatherMockService {
   async getCurrentConditions(locationId) {
+    console.log(`AccuWeatherMockService.getCurrentConditions(${locationId})`)
 
-    const response = fetch('http://localhost:3000/mocks/accuweather-current', {
-      method: 'GET'
+    const response = await fetch('http://localhost:3000/mocks/accuweather_current', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+
     });
 
+    //console.log("RESPONSE getCurrentConditions",response)
+
     if (!response.ok) {
+      console.log("NOT OK")
       throw new Error(response);
-    }        
-    
+    }   
+    console.log("OK")     
+    //console.log(response.json())
     return response.json();
   }
 
   async getDailyForecast(locationId) {
-    const response = fetch('http://localhost:3000/mocks/accuweather-daily', {
-      method: 'GET'
+    console.log(`AccuWeatherMockService.getDailyForecast(${locationId})`)
+    const response = await fetch('http://localhost:3000/mocks/accuweather_daily', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (!response.ok) {
+      console.log("getDailyForecast GEt ERROR")
       throw new Error(response);
     }        
 
@@ -105,20 +123,26 @@ export class AccuWeatherMockService {
   }
 
   async getLocation(cityName) {
-    const response = fetch(
-      'http://localhost:3000/mocks/accuweather-location',
+    console.log(`AccuWeatherMockService.getLocation(${cityName})`)
+    const response = await fetch(
+      'http://localhost:3000/mocks/accuweather_location',
       {
-        method: 'GET'
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
       }
+      
     );
 
+    //console.log("AccuWeatherMockService RESPONSE",response)
     if (!response.ok) {
       throw new Error(response);
     }           
+    //console.log("AccuWeatherMockService getLocation",response.json())
     return response.json();
   }
 
   getIconUrl(iconCode) {
+    console.log(iconCode)
     const fullIconCode = iconCode.toString().padStart(2, '0');
     return iconCode
       ? `https://developer.accuweather.com/sites/default/files/${fullIconCode}-s.png`

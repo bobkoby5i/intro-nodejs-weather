@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "ISC",
   "dependencies": {
-    "lit-html": "~1.2.1"
+    "lit-html": "^1.4.1",
+    "polymer-cli": "^1.9.11"
   }
 }

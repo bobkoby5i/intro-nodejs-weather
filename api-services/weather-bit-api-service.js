@@ -13,8 +13,8 @@ export class WeatherBitApiService {
     url.searchParams.append('key', this.apiKey);
     url.searchParams.append('city', cityName);   
 
-
-    const response = fetch(url, {
+    console.log("WeatherBitApiService.getCurrent")
+    const response = await fetch(url, {
       method: 'GET',
       //body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
@@ -36,14 +36,16 @@ export class WeatherBitApiService {
 
 export class WeatherBitMockService {
   async getCurrent(cityName) {
+    console.log("WeatherBitMockService.getCurrent")
 
     const urlMock = 'http://localhost:3000/mocks/weatherbit-current'
 
-    const response = fetch(urlMock, {
+    const response = await  fetch(urlMock, {
       method: 'GET',
       //body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
     });
+
 
     if (!response.ok) {
       throw new Error(response);

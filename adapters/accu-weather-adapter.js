@@ -1,4 +1,5 @@
-import get from 'lodash';
+import _ from 'lodash';
+
 
 import { emptyWeatherObject } from './empty-weather-object.js';
 
@@ -9,41 +10,74 @@ export class AccuWeatherAdapter {
   }
 
   async getWeather(cityName) {
+    console.log("AccuWeatherAdapter.getWeather")
+    
 
 
-    const res = emptyWeatherObject;
-
-    let currentCondition;
-    let dailyForecast;
+    
     let firstLocation;
 
     try {
       const location = await this.accuWeatherApiService.getLocation(cityName);
       firstLocation = location[0];
 
-      [currentCondition, dailyForecast] = await Promise.all([
+      console.log(firstLocation.Key, firstLocation.LocalizedName)
+
+
+      // const currentCondition = await this.accuWeatherApiService
+      //       .getCurrentConditions(firstLocation.Key)
+      //       .then((conditions) => {
+      //         console.log("THEN",conditions)
+      //         return conditions[0]
+      //       })
+      //       .catch((error) => {
+      //         console.log("CATCH", error)
+      //         return ({})
+      //       });
+      // const dailyForecast = await this.accuWeatherApiService
+      //      .getDailyForecast(firstLocation.Key)
+      //      .catch((error) => {
+      //       console.log("CATCH", error)
+      //       return ({})
+      //      })
+
+
+      const [currentCondition, dailyForecast] = await Promise.all([
         this.accuWeatherApiService
           .getCurrentConditions(firstLocation.Key)
           .then((conditions) => conditions[0])
-          .catch(() => ({})),
+          .catch((error) => {
+                  console.log("CATCH", error)
+                  return ({})
+                 }),
         this.accuWeatherApiService
           .getDailyForecast(firstLocation.Key)
-          .catch(() => ({})),
+          .catch((error) => {
+            console.log("CATCH", error)
+            return ({})
+           }),
       ]);  
 
-      res.location.cityName          = get(firstLocation, 'EnglishName')
-      res.location.countryCode       = get(firstLocation, 'Country.ID')
-      res.lastObservationTime        = new Date(currentCondition.LocalObservationDateTime),
-      res.weather.currentTemperature = get(currentCondition, 'Temperature.Metric.Value')
-      res.weather.minTemperature     = get(dailyForecast, 'DailyForecasts[0].Temperature.Minimum.Value')
-      res.weather.maxTemperature     = get(dailyForecast, 'DailyForecasts[0].Temperature.Maximum..Value')
-      res.weather.units              = get(currentCondition, 'Temperature.Metric.Unit')
-      res.weather.description        = get(currentCondition, 'WeatherText')
-      res.weather.iconUrl            = this.accuWeatherApiService.getIconUrl(get(currentCondition, 'WeatherIcon'))
-  
+      const res = {
+        lastObservationTime:new Date(currentCondition.LocalObservationDateTime),
+        location:{
+          cityName    : _.get(firstLocation, 'EnglishName'),
+          countryCode : _.get(firstLocation, 'Country.ID'),
+        },
+        weather: {
+          currentTemperature : _.get(currentCondition, 'Temperature.Metric.Value'),
+          minTemperature     : _.get(dailyForecast, 'DailyForecasts[0].Temperature.Minimum.Value'),
+          maxTemperature     : _.get(dailyForecast, 'DailyForecasts[0].Temperature.Maximum..Value'),
+          units              : _.get(currentCondition, 'Temperature.Metric.Unit'),
+          description        : _.get(currentCondition, 'WeatherText'),
+          iconUrl            : this.accuWeatherApiService.getIconUrl(_.get(currentCondition, 'WeatherIcon')),
+        }
+      };
+
       return res;      
 
     } catch (error) {
+      console.log("error", error)
       return emptyWeatherObject;
     }       
 

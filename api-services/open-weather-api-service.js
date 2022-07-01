@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-export class OpenWeatherMapApiService {
+export class OpenWeatherApiService {
   constructor(iconsBaseUrl, apiBaseUrl, apiKey) {
     this.iconsBaseUrl = iconsBaseUrl;
     this.apiBaseUrl = apiBaseUrl;
@@ -8,6 +8,7 @@ export class OpenWeatherMapApiService {
   }
 
   async getWeather(cityName) {
+    console.log("OpenWeatherApiService.getWeather()")
 
     const url = new URL(`${this.apiBaseUrl}/weather`);
     url.searchParams.append('appid', this.apiKey);
@@ -15,7 +16,7 @@ export class OpenWeatherMapApiService {
     url.searchParams.append('units', 'metric');
 
 
-    const response = fetch(url, {
+    const response = await fetch(url, {
       method: 'GET',
       //body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
@@ -33,12 +34,14 @@ export class OpenWeatherMapApiService {
   }
 }
 
-export class OpenWeatherMapMockService {
+export class OpenWeatherMockService {
   async getWeather(cityName) {
+    console.log("OpenWeatherMockService.getWeather()")
 
     const urlMock = 'http://localhost:3000/mocks/openweathermap_current'
 
-    const response = fetch(urlMock, {
+
+    const response = await fetch(urlMock, {
       method: 'GET',
       //body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' },
@@ -48,6 +51,7 @@ export class OpenWeatherMapMockService {
       throw new Error(response);
     }    
 
+    //console.log(response)
     return response.json();    
 
   }
